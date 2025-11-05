@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Фильтр «рабочих» сообщений</h1>
+<form method="post" action="/settings">
+  <label>Включить, если содержит (через запятую):</label>
+  <input type="text" name="include_keywords" value="{{ f.include_keywords or '' }}" placeholder="дз, дедлайн, контрольная, коллок, задача, отчет">
+  <label>Исключить, если содержит (через запятую):</label>
+  <input type="text" name="exclude_keywords" value="{{ f.exclude_keywords or '' }}" placeholder="мем, оффтоп, флуд, шутка">
+  <button type="submit">Сохранить</button>
+</form>
+<p class="note">Если список include пустой — пропускаются все сообщения (кроме попавших в exclude).</p>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Панель</h1>
+<p>Вы вошли как: <b>{{ user.first_name }} {{ user.last_name }}</b> ({{ user.phone }})</p>
+<ul>
+  <li><a href="/select_chats">Выбрать чаты</a></li>
+  <li><a href="/feed">Открыть ленту</a></li>
+  <li><a href="/settings">Настроить фильтр</a></li>
+</ul>
+{% endblock %}

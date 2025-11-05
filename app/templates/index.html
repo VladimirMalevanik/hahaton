@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Логин в Telegram</h1>
+<form method="post" action="/start_login">
+  <label>Телефон (в международном формате):</label>
+  <input type="text" name="phone" placeholder="+79990000000" required>
+  <button type="submit">Получить код</button>
+</form>
+<p class="note">После ввода телефона на следующем шаге введите код из Telegram. Если включена 2FA — будет нужен пароль.</p>
+{% endblock %}

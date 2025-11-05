@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Выбор чатов</h1>
+<form method="post" action="/select_chats">
+  <div class="list">
+    {% for c in chats %}
+      <label class="row">
+        <input type="checkbox" name="chat_{{ c.id }}" value="{{ c.id }}" {% if c.selected %}checked{% endif %}>
+        <span>{{ c.title }} — <i>{{ c.chat_type }}</i></span>
+      </label>
+    {% endfor %}
+  </div>
+  <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

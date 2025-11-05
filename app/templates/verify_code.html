@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Введите код (и при необходимости пароль 2FA)</h1>
+<form method="post" action="/finish_login">
+  <label>Код из Telegram:</label>
+  <input type="text" name="code" required>
+  <label>Пароль (если включена 2FA):</label>
+  <input type="password" name="password">
+  <button type="submit">Завершить вход</button>
+</form>
+{% endblock %}

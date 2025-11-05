@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Лента</h1>
+<div id="feed">
+  {% for m in messages %}
+    <div class="msg">
+      <div class="meta">{{ m.date }} — <b>{{ m.sender_name }}</b> в <i>{{ m.chat.title }}</i></div>
+      <div class="text">{{ m.text }}</div>
+    </div>
+  {% endfor %}
+</div>
+
+<h2>Ответить</h2>
+<form method="post" action="/api/send_message">
+  <label>Чат:</label>
+  <select name="chat_id">
+    {% for m in messages|reverse %}{% if loop.first %}
+      {% set last_chat = m.chat %}
+    {% endif %}{% endfor %}
+    {% for m in messages %}
+      {% set c = m.chat %}
+    {% endfor %}
+    {% for m in messages|map(attribute='chat')|unique %}{% endfor %}
+  </select>
+  <script>
+    // Build chat options from existing message list (unique by chat_id)
+    (function(){
+      const seen = new Set();
+      const select = document.querySelector('select[name="chat_id"]');
+      {% for m in messages %}
+        (function(){
+          const id = {{ m.chat.id }};
+          if (!seen.has(id)) {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.textContent = "{{ m.chat.title|e }}";
+            select.appendChild(opt);
+            seen.add(id);
+          }
+        })();
+      {% endfor %}
+    })();
+  </script>
+  <label>Текст:</label>
+  <textarea name="text" rows="3" required></textarea>
+  <button type="submit">Отправить</button>
+</form>
+
+<script>
+  const feedDiv = document.getElementById('feed');
+  function appendMessage(m) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg';
+    wrap.innerHTML = `<div class="meta">${m.date} — <b>${m.sender}</b> в <i>${m.chat_title}</i></div>
+                      <div class="text"></div>`;
+    wrap.querySelector('.text').textContent = m.text || "";
+    feedDiv.appendChild(wrap);
+    feedDiv.scrollTop = feedDiv.scrollHeight;
+  }
+
+  // Connect WebSocket
+  (function(){
+    const params = new URLSearchParams(window.location.search);
+    // user_id is not exposed in template; backend will accept ?user_id from cookie-based session via server-side.
+    // For demo, we ask it interactively (not ideal), but we can request it from a small endpoint;
+    // To keep it simple, let backend require it in query. We'll fetch via cookie-less fallback: hidden endpoint could return it.
+  })();
+</script>
+
+<script>
+// Fetch current user_id via a tiny helper (embed in page via JSON script tag to avoid exposing endpoint).
+</script>
+
+<script>
+(async function(){
+  // Server doesn't expose an endpoint for user id; embed via set-cookie? We'll do a small trick:
+  // open WS with ?user_id=0 — backend won't route messages then. To enable real-time, we ask backend to render inline user_id.
+  const userId = {{ request.session.get("user_id") or 0 }};
+  const proto = (location.protocol === 'https:') ? 'wss' : 'ws';
+  const ws = new WebSocket(`${proto}://${location.host}/ws?user_id=${userId}`);
+  ws.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      if (data.type === 'message') appendMessage(data);
+    } catch(e){}
+  };
+})();
+</script>
+{% endblock %}
