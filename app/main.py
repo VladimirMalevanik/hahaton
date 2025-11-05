@@ -1,14 +1,17 @@
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
-from .db import engine, Base, AsyncSessionLocal
+
+# ↓ добавь эти две строки
+from dotenv import load_dotenv
+load_dotenv()
+
+from .db import engine, Base
 from .auth_routes import router as auth_router
 from .chat_routes import router as chat_router
+
 
 app = FastAPI(title="TG Filter Web")
 
