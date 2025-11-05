@@ -11,6 +11,8 @@ load_dotenv()
 from .db import engine, Base
 from .auth_routes import router as auth_router
 from .chat_routes import router as chat_router
+from dotenv import load_dotenv
+load_dotenv()
 
 
 app = FastAPI(title="TG Filter Web")
